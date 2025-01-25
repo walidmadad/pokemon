@@ -299,11 +299,16 @@ unique_ptr<Pokemon> genererPokemonAleatoire()
 // Classe Joueur
 class Joueur
 {
-    string nom;
+    string nom;                         // Nom du joueur
     string nomEquipe;                   // Ajout du nom de l'équipe
     vector<unique_ptr<Pokemon>> equipe; // Utilisation de pointeurs uniques pour stocker les Pokémon
 
 public:
+    Joueur()
+    {
+        nom = "";
+        equipe.clear(); // Si vous avez un vecteur d'équipe
+    }
     Joueur(string nom) : nom(nom), nomEquipe("Équipe sans nom") {}
 
     // Méthodes pour définir le nom de l'équipe et ajouter un Pokémon à l'équipe
@@ -349,7 +354,7 @@ public:
 };
 
 // Fonction de combat entre deux équipes
-void combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, const string &nomEquipe1, const string &nomEquipe2)
+string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, const string &nomEquipe1, const string &nomEquipe2)
 {
     size_t i = 0, j = 0, x = 0;
 
@@ -424,10 +429,24 @@ void combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, cons
     if (i < equipe1.size())
     {
         cout << "\nL'équipe \"" << nomEquipe1 << "\" remporte le match 🏆🎉\n";
+        int x = 0;
+        while (x < equipe1.size())
+        {
+            equipe1[x]->restaurerPV();
+            x++;
+        }
+        return nomEquipe1;
     }
     else
     {
         cout << "\nL'équipe \"" << nomEquipe2 << "\" remporte le match🏆🎉\n";
+        int x = 0;
+        while (x < equipe2.size())
+        {
+            equipe2[x]->restaurerPV();
+            x++;
+        }
+        return nomEquipe2;
     }
 }
 
@@ -463,26 +482,90 @@ Joueur genererJoueurAleatoire(vector<string> &nomsDejaUtilises)
     return joueur;
 }
 
+string combattre(Joueur &joueur1, Joueur &joueur2)
+{
+    // Sélectionner les équipes
+    auto equipe1 = joueur1.selectionnerEquipe();
+    auto equipe2 = joueur2.selectionnerEquipe();
+
+    // Affichage des informations des joueurs
+    cout << "\nMatch entre " << joueur1.getNom() << " et " << joueur2.getNom() << "!\n";
+
+    // Combat entre les deux équipes
+    if (combattreEquipes(equipe1, equipe2, joueur1.getNomEquipe(), joueur2.getNomEquipe()) == joueur1.getNomEquipe())
+    {
+        return joueur1.getNom();
+    }
+    else
+    {
+        return joueur2.getNom();
+    }
+}
+
+// Fonction pour organiser un tournoi entre quatre joueurs
+void tournoi(Joueur &joueur1, Joueur &joueur2, Joueur &joueur3, Joueur &joueur4)
+{
+    // Tournoi à élimination directe
+    cout << "\n=== Début du tournoi ===\n";
+    // Premier match (joueur1 contre joueur2)
+    cout << "\nPremier match : " << joueur1.getNom() << " contre " << joueur2.getNom() << endl;
+    string gagnant1 = combattre(joueur1, joueur2);
+    if (gagnant1 == joueur1.getNom())
+    {
+        // Deuxième match (joueur3 contre joueur4)
+        cout << "\n=== Demi finale ===" << endl;
+        string gagnant2 = combattre(joueur3, joueur4);
+        if (gagnant2 == joueur3.getNom())
+        {
+            // Finale (gagnants des deux premiers matchs)
+            cout << "\n===🏆 Finale 🏆===\n";
+            string winner = combattre(joueur1, joueur3);
+            cout << "The Winner is " << winner << " 🏆🏆🏆";
+        }
+        else
+        {
+            // Finale (gagnants des deux premiers matchs)
+            cout << "\n===🏆 Finale 🏆===\n";
+            string winner = combattre(joueur1, joueur4);
+            cout << "The Winner is " << winner << " 🏆🏆🏆";
+        }
+    }
+    else
+    {
+        // Deuxième match (joueur3 contre joueur4)
+        cout << "\n=== Demi finale ===" << endl;
+        string gagnant2 = combattre(joueur3, joueur4);
+        if (gagnant2 == joueur3.getNom())
+        {
+            // Finale (gagnants des deux premiers matchs)
+            cout << "\n=== 🏆 Finale 🏆===\n";
+            string winner = combattre(joueur2, joueur3);
+            cout << "The Winner is " << winner << " 🏆🏆🏆";
+        }
+        else
+        {
+            // Finale (gagnants des deux premiers matchs)
+            cout << "\n===🏆 Finale 🏆===\n";
+            string winner = combattre(joueur1, joueur4);
+            cout << "The Winner is " << winner << " 🏆🏆🏆";
+        }
+    }
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(0)));
 
     vector<string> nomsDejaUtilises; // Liste pour suivre les noms déjà utilisés
 
-    // Génération de deux joueurs aléatoires
+    // Génération de quatre joueurs aléatoires
     Joueur joueur1 = genererJoueurAleatoire(nomsDejaUtilises);
     Joueur joueur2 = genererJoueurAleatoire(nomsDejaUtilises);
+    Joueur joueur3 = genererJoueurAleatoire(nomsDejaUtilises);
+    Joueur joueur4 = genererJoueurAleatoire(nomsDejaUtilises);
+    Joueur winner1, winner2;
 
-    // Affichage des informations des joueurs
-    cout << "\nNom de l'équipe de " << joueur1.getNom() << ": " << joueur1.getNomEquipe() << endl;
-    cout << "Nom de l'équipe de " << joueur2.getNom() << ": " << joueur2.getNomEquipe() << endl;
-
-    // Sélection des équipes
-    auto equipe1 = joueur1.selectionnerEquipe();
-    auto equipe2 = joueur2.selectionnerEquipe();
-
-    // Combat entre les deux équipes
-    combattreEquipes(equipe1, equipe2, joueur1.getNomEquipe(), joueur2.getNomEquipe());
+    tournoi(joueur1, joueur2, joueur3, joueur4);
 
     return 0;
 }
