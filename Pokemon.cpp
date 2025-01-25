@@ -22,18 +22,20 @@ public:
     Pokemon(string nom, int pv, int atk, int def, int vit)
         : nom(nom), pointsDeVie(pv), attaque(atk), defense(def), vitesse(vit), pointsDeVieInitiaux(pv) {}
 
-        // Destructeur virtuel
+    // Destructeur virtuel
     // Permet de s'assurer que le destructeur de la classe dérivée sera appelé
     virtual ~Pokemon() = default;
 
     // Méthode virtuelle pure pour obtenir le type du Pokémon
     virtual int getType() const = 0;
 
+    // Méthode pour afficher les statistiques du Pokémon
     string afficherStat() const
     {
         return "Nom: " + nom + ", PV: " + to_string(pointsDeVie) + ", Attaque: " + to_string(attaque) + ", Défense: " + to_string(defense) + ", Vitesse: " + to_string(vitesse);
     }
 
+    // Méthodes pour obtenir le nom et les points de vie du Pokémon
     string getNom()
     {
         return nom;
@@ -44,11 +46,13 @@ public:
         pointsDeVie = max(0, pointsDeVie - montant);
     }
 
+    // Méthode pour restaurer les points de vie du Pokémon
     void restaurerPV()
     {
         pointsDeVie = pointsDeVieInitiaux;
     }
 
+    // Méthode pour vérifier si le Pokémon est KO
     bool estKO() const
     {
         return pointsDeVie <= 0;
@@ -59,9 +63,11 @@ public:
         return vitesse;
     }
 
+    // Méthode pour attaquer un autre Pokémon
     void attaquer(Pokemon &cible)
     {
         // Multiplicateur par défaut : neutre (1.0)
+        // Le multiplicateur peut être modifié en fonction du type de Pokémon
         double multiplicateurType = calculerMultiplicateur(cible);
 
         // Facteur aléatoire (entre 0.85 et 1.0)
@@ -74,6 +80,7 @@ public:
     }
 
 protected:
+    // Méthode virtuelle pour calculer le multiplicateur de dégâts
     virtual double calculerMultiplicateur(const Pokemon &cible) const
     {
         return 1.0; // Neutre par défaut
