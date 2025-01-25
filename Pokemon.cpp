@@ -100,6 +100,7 @@ public:
     }
 
 protected:
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
         if (cible.getType() == 2)
@@ -120,7 +121,7 @@ public:
     {
         return 2; // Eau
     }
-
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
 protected:
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
@@ -203,8 +204,10 @@ protected:
 };
 
 // Génération aléatoire de Pokémon
+// Retourne un pointeur unique vers un Pokémon
 unique_ptr<Pokemon> genererPokemonAleatoire()
 {
+    // Types de Pokémon
     int type = rand() % 5 + 1; // 1: Feu, 2: Eau, 3: Plante, 4: Electrique, 5: Roche
     string nomsFeu[] = {"Salamèche", "Ponyta", "Dracaufeu"};
     string nomsEau[] = {"Carapuce", "Tentacruel", "Tortank"};
@@ -219,16 +222,22 @@ unique_ptr<Pokemon> genererPokemonAleatoire()
     switch (type)
     {
     case 1: // Feu
+        // Retourne un pointeur unique vers un Pokémon de type Feu
         return make_unique<FirePokemon>(nomsFeu[rand() % 3], pv, atk, def, vit);
     case 2: // Eau
+        // Retourne un pointeur unique vers un Pokémon de type Eau
         return make_unique<WaterPokemon>(nomsEau[rand() % 3], pv, atk, def, vit);
     case 3: // Plante
+        // Retourne un pointeur unique vers un Pokémon de type Plante
         return make_unique<GrassPokemon>(nomsPlante[rand() % 3], pv, atk, def, vit);
     case 4: // Électrique
+        // Retourne un pointeur unique vers un Pokémon de type Électrique
         return make_unique<ElectricPokemon>(nomsElectrique[rand() % 3], pv, atk, def, vit);
     case 5: // Roche
+        // Retourne un pointeur unique vers un Pokémon de type Roche
         return make_unique<RockPokemon>(nomsRoche[rand() % 3], pv, atk, def, vit);
     default:
+        // Retourne un pointeur nul si le type est invalide
         return nullptr;
     }
 }
@@ -237,12 +246,13 @@ unique_ptr<Pokemon> genererPokemonAleatoire()
 class Joueur
 {
     string nom;
-    string nomEquipe; // Ajout du nom de l'équipe
-    vector<unique_ptr<Pokemon>> equipe;
+    string nomEquipe;                   // Ajout du nom de l'équipe
+    vector<unique_ptr<Pokemon>> equipe; // Utilisation de pointeurs uniques pour stocker les Pokémon
 
 public:
     Joueur(string nom) : nom(nom), nomEquipe("Équipe sans nom") {}
 
+    // Méthodes pour définir le nom de l'équipe et ajouter un Pokémon à l'équipe
     void setNomEquipe(const string &nomEquipe)
     {
         this->nomEquipe = nomEquipe;
@@ -259,7 +269,7 @@ public:
         {
             cout << "\nAjout de Pokémon dans l'équipe \"" << nomEquipe << "\" \n";
             cout << p->afficherStat(); // Afficher les stats du Pokémon ajouté
-            equipe.push_back(move(p));
+            equipe.push_back(move(p)); // Ajout du Pokémon à l'équipe
         }
         else
         {
@@ -267,6 +277,7 @@ public:
         }
     }
 
+    // Méthode pour sélectionner les trois premiers Pokémon de l'équipe
     vector<Pokemon *> selectionnerEquipe()
     {
         vector<Pokemon *> selection;
