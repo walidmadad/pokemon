@@ -26,10 +26,9 @@ public:
 
     virtual int getType() const = 0; // Méthode virtuelle pure
 
-    void afficherStat() const
+    string afficherStat() const
     {
-        cout << "Nom: " << nom << ", PV: " << pointsDeVie << ", Attaque: " << attaque
-             << ", Défense: " << defense << ", Vitesse: " << vitesse << endl;
+        return "Nom: " + nom + ", PV: " + to_string(pointsDeVie) + ", Attaque: " + to_string(attaque) + ", Défense: " + to_string(defense) + ", Vitesse: " + to_string(vitesse);
     }
 
     string getNom()
@@ -78,7 +77,7 @@ protected:
     }
 };
 
-// Classes dérivées
+// Classes dérivées pour chaque type de Pokémon
 class FirePokemon : public Pokemon
 {
 public:
@@ -196,16 +195,16 @@ protected:
 // Génération aléatoire de Pokémon
 unique_ptr<Pokemon> genererPokemonAleatoire()
 {
-    int type = rand() % 5 + 1; // 1: Feu, 2: Eau, 3: Plante
+    int type = rand() % 5 + 1; // 1: Feu, 2: Eau, 3: Plante, 4: Electrique, 5: Roche
     string nomsFeu[] = {"Salamèche", "Ponyta", "Dracaufeu"};
     string nomsEau[] = {"Carapuce", "Tentacruel", "Tortank"};
     string nomsPlante[] = {"Bulbizarre", "Florizarre", "Roserade"};
     string nomsElectrique[] = {"Pikachu", "Raichu", "Voltali"};
     string nomsRoche[] = {"Racaillou", "Gravalanch", "Tyranocif"};
-    int pv = rand() % 101 + 50;  // Points de vie aléatoires entre 50 et 150
-    int atk = rand() % 101 + 20; // Attaque aléatoire entre 20 et 120
-    int def = rand() % 101 + 10; // Défense aléatoire entre 10 et 110
-    int vit = rand() % 101 + 30; // Vitesse aléatoire entre 30 et 130
+    int pv = rand() % 31 + 120; // PV aléatoires entre 120 et 150
+    int atk = rand() % 31 + 50; // Attaque aléatoire entre 50 et 80
+    int def = rand() % 21 + 40; // Défense aléatoire entre 40 et 60
+    int vit = rand() % 31 + 50; // Vitesse aléatoire entre 50 et 80
 
     switch (type)
     {
@@ -234,9 +233,9 @@ class Joueur
 public:
     Joueur(string nom) : nom(nom), nomEquipe("Équipe sans nom") {}
 
-    void setNomEquipe(const string &nom)
+    void setNomEquipe(const string &nomEquipe)
     {
-        nomEquipe = nom;
+        this->nomEquipe = nomEquipe;
     }
 
     string getNomEquipe() const
@@ -249,7 +248,7 @@ public:
         if (equipe.size() < 6)
         {
             cout << "\nAjout de Pokémon dans l'équipe \"" << nomEquipe << "\" \n";
-            p->afficherStat(); // Afficher les stats du Pokémon ajouté
+            cout << p->afficherStat(); // Afficher les stats du Pokémon ajouté
             equipe.push_back(move(p));
         }
         else
@@ -277,10 +276,22 @@ public:
 // Fonction de combat entre deux équipes
 void combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, const string &nomEquipe1, const string &nomEquipe2)
 {
-    size_t i = 0, j = 0;
+    size_t i = 0, j = 0, x = 0;
 
     cout << "\n===== \"" << nomEquipe1 << "\" 🆚 \"" << nomEquipe2 << "\" ! =====\n\n";
-
+    cout << "Equipe : " + nomEquipe1 << endl;
+    while (x < equipe1.size())
+    {
+        cout << "\t" << equipe1[x]->afficherStat() << endl;
+        x++;
+    }
+    x = 0;
+    cout << "\nEquipe : " + nomEquipe2 << endl;
+    while (x < equipe2.size())
+    {
+        cout << "\t" << equipe2[x]->afficherStat() << endl;
+        x++;
+    }
     while (i < equipe1.size() && j < equipe2.size())
     {
         cout << "\n=== " << equipe1[i]->getNom() << " ⚔️ " << equipe2[j]->getNom() << " ! ===\n";
@@ -337,11 +348,11 @@ void combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, cons
 
     if (i < equipe1.size())
     {
-        cout << "\nL'équipe \"" << nomEquipe1 << "\" remporte la victoire! 🏆🎉\n";
+        cout << "\nL'équipe \"" << nomEquipe1 << "\" remporte le match 🏆🎉\n";
     }
     else
     {
-        cout << "\nL'équipe \"" << nomEquipe2 << "\" remporte la victoire! 🏆🎉\n";
+        cout << "\nL'équipe \"" << nomEquipe2 << "\" remporte le match🏆🎉\n";
     }
 }
 
@@ -350,15 +361,20 @@ int main()
     srand(static_cast<unsigned>(time(0)));
 
     // Création des joueurs
-    Joueur joueur1("Walid");
-    Joueur joueur2("Rayane");
+    string nomJoueur1 = "Walid";
+    string nomJoueur2 = "Rayane";
+
+    Joueur joueur1(nomJoueur1);
+    Joueur joueur2(nomJoueur2);
 
     // Définir les noms des équipes
-    joueur1.setNomEquipe("Les Flammes Ardentes (Walid)");
-    joueur2.setNomEquipe("Les Vagues Infernales (Rayane)");
+    string nomEquipe1 = "Les Flammes Ardentes";
+    string nomEquipe2 = "Les Vagues Infernales";
+    joueur1.setNomEquipe(nomEquipe1 + " (" + nomJoueur1 + ")");
+    joueur2.setNomEquipe(nomEquipe2 + " (" + nomJoueur2 + ")");
 
     // Ajout de Pokémon aux équipes
-    for (int i = 0; i < 6; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         joueur1.ajouterPokemon(genererPokemonAleatoire());
         joueur2.ajouterPokemon(genererPokemonAleatoire());
@@ -368,8 +384,7 @@ int main()
     auto equipe1 = joueur1.selectionnerEquipe();
     auto equipe2 = joueur2.selectionnerEquipe();
 
-    // Combat
+    // Combat entre les deux équipes
     combattreEquipes(equipe1, equipe2, joueur1.getNomEquipe(), joueur2.getNomEquipe());
-
     return 0;
 }
