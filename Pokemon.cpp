@@ -22,9 +22,12 @@ public:
     Pokemon(string nom, int pv, int atk, int def, int vit)
         : nom(nom), pointsDeVie(pv), attaque(atk), defense(def), vitesse(vit), pointsDeVieInitiaux(pv) {}
 
+        // Destructeur virtuel
+    // Permet de s'assurer que le destructeur de la classe dérivée sera appelé
     virtual ~Pokemon() = default;
 
-    virtual int getType() const = 0; // Méthode virtuelle pure
+    // Méthode virtuelle pure pour obtenir le type du Pokémon
+    virtual int getType() const = 0;
 
     string afficherStat() const
     {
