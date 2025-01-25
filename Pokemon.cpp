@@ -1,3 +1,31 @@
+// Créé par Walid et Rayane
+// Date de création: 2025-01-05
+// Dernière modification: 2025-01-25
+
+// Nom du programme: Pokemon
+// Description: Un jeu de combat Pokémon simplifié avec des classes et des pointeurs uniques
+// Compilation: g++ Pokemon.cpp -o Pokemon -std=c++11 && ./Pokemon
+
+// Entrée: Aucune
+// Exemple de sortie:
+// ===== "Les Flammes Ardentes (Walid)" 🆚 "Les Vagues Infernales (Rayane)" ! =====
+// Equipe : Les Flammes Ardentes (Walid)
+// 	Nom: Dracaufeu, PV: 150, Attaque: 80, Défense: 60, Vitesse: 80
+// 	Nom: Salamèche, PV: 120, Attaque: 50, Défense: 40, Vitesse: 50
+// 	Nom: Dracaufeu, PV: 150, Attaque: 80, Défense: 60, Vitesse: 80
+// Equipe : Les Vagues Infernales (Rayane)
+// 	Nom: Voltali, PV: 150, Attaque: 80, Défense: 60, Vitesse: 80
+// 	Nom: Pikachu, PV: 120, Attaque: 50, Défense: 40, Vitesse: 50
+// 	Nom: Voltali, PV: 150, Attaque: 80, Défense: 60, Vitesse: 80
+// === Dracaufeu ⚔️ Voltali ! ===
+// Dracaufeu a activé son attaque spéciale !
+// Dracaufeu attaque 💥 Voltali et inflige 100 dégâts
+// Voltali attaque 💥 Dracaufeu et inflige 50 dégât
+// Dracaufeu attaque 💥 Voltali et inflige 100 dégâts
+// Voltali est KO 💀
+// Les Flammes Ardentes (Walid) remporte le match 🏆🎉
+
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -17,6 +45,7 @@ protected:
     int defense;
     int vitesse;
     int pointsDeVieInitiaux;
+    bool attaqueSpecialeActivee = false; // Attribut pour suivre l'activation de l'attaque spéciale
 
 public:
     Pokemon(string nom, int pv, int atk, int def, int vit)
@@ -63,19 +92,44 @@ public:
         return vitesse;
     }
 
+    // Méthode pour activer l'attaque spéciale du Pokémon
+    void activerAttaqueSpeciale()
+    {
+        // Activation de l'attaque spéciale avec une probabilité de 30%
+        double chanceActivation = static_cast<double>(rand()) / RAND_MAX;
+
+        // Affichage du message si l'attaque spéciale est activée
+        if (chanceActivation < 0.3)
+        {
+            attaqueSpecialeActivee = true;
+            cout << nom << " a activé son attaque spéciale !\n";
+        }
+    }
+
     // Méthode pour attaquer un autre Pokémon
     void attaquer(Pokemon &cible)
     {
-        // Multiplicateur par défaut : neutre (1.0)
+
+        // Activer l'attaque spéciale avant de commencer l'attaque
+        if (!attaqueSpecialeActivee)
+        {
+            activerAttaqueSpeciale();
+        }
+
         // Le multiplicateur peut être modifié en fonction du type de Pokémon
         double multiplicateurType = calculerMultiplicateur(cible);
+
+        double multiplicateurSpecial = attaqueSpecialeActivee ? 2.0 : 1.0;
 
         // Facteur aléatoire (entre 0.85 et 1.0)
         double facteurAleatoire = 0.85 + static_cast<double>(rand() % 16) / 100.0;
 
-        int degats = static_cast<int>((attaque * 50 / cible.defense) * multiplicateurType * facteurAleatoire);
-        cible.perdrePV(degats);
+        // Calcul des dégâts infligés à la cible
+        int degats = static_cast<int>((attaque * 50 / cible.defense) * multiplicateurType * multiplicateurSpecial * facteurAleatoire);
 
+        cible.perdrePV(degats); // Réduction des points de vie de la cible
+
+        // Affichage des dégâts infligés
         cout << nom << " attaque 💥 " << cible.nom << " et inflige " << degats << " dégâts.\n";
     }
 
@@ -377,29 +431,51 @@ void combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, cons
     }
 }
 
+// Fonction pour générer un joueur aléatoirement
+Joueur genererJoueurAleatoire(vector<string> &nomsDejaUtilises)
+{
+    // Liste de noms possibles pour les joueurs
+    string nomsJoueurs[] = {"Walid", "Rayane", "Léo", "Alex", "Mélissa"};
+    string nomJoueur;
+
+    // Recherche d'un nom non utilisé
+    do
+    {
+        nomJoueur = nomsJoueurs[rand() % 5];
+    } while (find(nomsDejaUtilises.begin(), nomsDejaUtilises.end(), nomJoueur) != nomsDejaUtilises.end());
+
+    // Ajout du nom à la liste des noms déjà utilisés
+    nomsDejaUtilises.push_back(nomJoueur);
+
+    // Création du joueur avec un nom aléatoire
+    Joueur joueur(nomJoueur);
+
+    // Nom de l'équipe (aléatoire également)
+    string nomsEquipes[] = {"Les Flammes Ardentes", "Les Vagues Infernales", "Les Tornades Mystiques", "Les Guerriers de la Nuit"};
+    joueur.setNomEquipe(nomsEquipes[rand() % 4] + " (" + nomJoueur + ")");
+
+    // Génération d'une équipe de 6 Pokémon
+    for (int i = 0; i < 6; ++i)
+    {
+        joueur.ajouterPokemon(genererPokemonAleatoire());
+    }
+
+    return joueur;
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(0)));
 
-    // Création des joueurs
-    string nomJoueur1 = "Walid";
-    string nomJoueur2 = "Rayane";
+    vector<string> nomsDejaUtilises; // Liste pour suivre les noms déjà utilisés
 
-    Joueur joueur1(nomJoueur1);
-    Joueur joueur2(nomJoueur2);
+    // Génération de deux joueurs aléatoires
+    Joueur joueur1 = genererJoueurAleatoire(nomsDejaUtilises);
+    Joueur joueur2 = genererJoueurAleatoire(nomsDejaUtilises);
 
-    // Définir les noms des équipes
-    string nomEquipe1 = "Les Flammes Ardentes";
-    string nomEquipe2 = "Les Vagues Infernales";
-    joueur1.setNomEquipe(nomEquipe1 + " (" + nomJoueur1 + ")");
-    joueur2.setNomEquipe(nomEquipe2 + " (" + nomJoueur2 + ")");
-
-    // Ajout de Pokémon aux équipes
-    for (int i = 0; i < 4; ++i)
-    {
-        joueur1.ajouterPokemon(genererPokemonAleatoire());
-        joueur2.ajouterPokemon(genererPokemonAleatoire());
-    }
+    // Affichage des informations des joueurs
+    cout << "\nNom de l'équipe de " << joueur1.getNom() << ": " << joueur1.getNomEquipe() << endl;
+    cout << "Nom de l'équipe de " << joueur2.getNom() << ": " << joueur2.getNomEquipe() << endl;
 
     // Sélection des équipes
     auto equipe1 = joueur1.selectionnerEquipe();
@@ -407,5 +483,6 @@ int main()
 
     // Combat entre les deux équipes
     combattreEquipes(equipe1, equipe2, joueur1.getNomEquipe(), joueur2.getNomEquipe());
+
     return 0;
 }
