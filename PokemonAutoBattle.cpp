@@ -36,9 +36,9 @@
 #include <iostream>  // Pour std::cout
 #include <vector>    // Pour std::vector
 #include <string>    // Pour std::string
-#include <cstdlib>   // Pour std::rand
+#include <cstdlib>   // Pour std::rand et std::srand
 #include <ctime>     // Pour std::time
-#include <memory>    // Pour std::unique_ptr
+#include <memory>    // Pour std::unique_ptr et std::make_unique
 
 using namespace std;
 
@@ -54,6 +54,7 @@ protected:
     int vitesse;
     int pointsDeVieInitiaux;
     bool attaqueSpecialeActivee = false; // Attribut pour suivre l'activation de l'attaque spéciale
+    bool attaqueSpecialeDejaActivee = false;
 
 public:
     // Constructeur avec initialisation des attributs
@@ -106,14 +107,17 @@ public:
     // Méthode pour activer l'attaque spéciale du Pokémon
     void activerAttaqueSpeciale()
     {
-        // Activation de l'attaque spéciale avec une probabilité de 30%
-        double chanceActivation = static_cast<double>(rand()) / RAND_MAX;
-
-        // Affichage du message si l'attaque spéciale est activée
-        if (chanceActivation < 0.3)
+        if (!attaqueSpecialeDejaActivee) // Ne pas réactiver si déjà activée
         {
-            attaqueSpecialeActivee = true;                       // Activer l'attaque spéciale
-            cout << nom << " a activé son attaque spéciale !\n"; // Affichage du message
+            // Activation de l'attaque spéciale avec une probabilité de 30%
+            double chanceActivation = static_cast<double>(rand()) / RAND_MAX;
+
+            if (chanceActivation < 0.3) // 30% de chance d'activation
+            {
+                attaqueSpecialeActivee = true;                       // Activer l'attaque spéciale
+                attaqueSpecialeDejaActivee = true;                   // Assurer que l'attaque spéciale est activée une seule fois
+                cout << nom << " a activé son attaque spéciale !\n"; // Affichage du message
+            }
         }
     }
 
@@ -129,14 +133,19 @@ public:
 
         // Le multiplicateur peut être modifié en fonction du type de Pokémon
         double multiplicateurType = calculerMultiplicateur(cible);
+        double multiplicateurSpecial = 1.0;
 
-        double multiplicateurSpecial = attaqueSpecialeActivee ? 2.0 : 1.0;
+        if (attaqueSpecialeActivee)
+        {
+            multiplicateurSpecial = 2.0;
+        }
+        attaqueSpecialeActivee = false; // Réinitialiser l'attaque spéciale
 
         // Facteur aléatoire (entre 0.85 et 1.0)
         double facteurAleatoire = 0.85 + static_cast<double>(rand() % 16) / 100.0;
 
         // Calcul des dégâts infligés à la cible
-        int degats = static_cast<int>((attaque * 50 / cible.defense) * multiplicateurType * multiplicateurSpecial * facteurAleatoire);
+        int degats = static_cast<int>((attaque * 20 / cible.defense) * multiplicateurType * multiplicateurSpecial * facteurAleatoire);
 
         cible.perdrePV(degats); // Réduction des points de vie de la cible
 
@@ -292,10 +301,10 @@ unique_ptr<Pokemon> genererPokemonAleatoire()
     string nomsPlante[] = {"Bulbizarre", "Florizarre", "Roserade"}; // Noms de Pokémon plante
     string nomsElectrique[] = {"Pikachu", "Raichu", "Voltali"};     // Noms de Pokémon électrique
     string nomsRoche[] = {"Racaillou", "Gravalanch", "Tyranocif"};  // Noms de Pokémon roche
-    int pv = rand() % 31 + 120;                                     // PV aléatoires entre 120 et 150
-    int atk = rand() % 31 + 50;                                     // Attaque aléatoire entre 50 et 80
-    int def = rand() % 21 + 40;                                     // Défense aléatoire entre 40 et 60
-    int vit = rand() % 31 + 50;                                     // Vitesse aléatoire entre 50 et 80
+    int pv = rand() % 31 + 200;                                     // Points de vie aléatoires entre 200 et 230
+    int atk = rand() % 21 + 30;                                     // Attaque aléatoire entre 30 et 50
+    int def = rand() % 11 + 20;                                     // Défense aléatoire entre 20 et 40
+    int vit = rand() % 11 + 20;                                     // Vitesse aléatoire entre 20 et 40
 
     switch (type) // Sélection du type de Pokémon
     {
