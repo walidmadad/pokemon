@@ -1,9 +1,16 @@
-// Créé par Walid et Rayane
-// Date de création: 2025-01-05
+// Créé par Walid Madad et Rayane Benchokroun
+// Date de création: 2025-12-25
 // Dernière modification: 2025-01-25
+// Le Français est la langue principale du code
 
-// Nom du programme: Pokemon
-// Description: Un jeu de combat Pokémon simplifié avec des classes et des pointeurs uniques
+// Nom du programme: Pokémon Auto-Battle
+/* Description: Ce programme simule un combat Pokémon entre deux équipes de trois Pokémon chacune.
+   Chaque Pokémon a un type (Feu, Eau, Plante, Électrique, Roche) qui influence les dégâts infligés.
+   Les dégâts sont calculés en fonction de l'attaque, de la défense, de la vitesse et du type des Pokémon.
+   Les Pokémon peuvent également activer une attaque spéciale avec une probabilité de 30% pour infliger des dégâts supplémentaires.
+   Le programme affiche les statistiques des Pokémon, les dégâts infligés et le résultat du combat.
+*/
+
 // Compilation: g++ Pokemon.cpp -o Pokemon -std=c++11 && ./Pokemon
 
 // Entrée: Aucune
@@ -525,6 +532,7 @@ string combattre(Joueur &joueur1, Joueur &joueur2)
         return joueur2.getNom();
     }
 }
+
 // Fonction pour organiser un tournoi entre quatre joueurs
 void tournoi(Joueur &joueur1, Joueur &joueur2, Joueur &joueur3, Joueur &joueur4)
 {
@@ -587,6 +595,7 @@ int main()
     Joueur joueur3 = genererJoueurAleatoire(nomsDejaUtilises);
     Joueur joueur4 = genererJoueurAleatoire(nomsDejaUtilises);
 
+    // Organiser un tournoi entre les quatre joueurs
     tournoi(joueur1, joueur2, joueur3, joueur4);
 
     return 0;
