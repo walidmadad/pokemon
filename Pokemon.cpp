@@ -25,19 +25,20 @@
 // Voltali est KO 💀
 // Les Flammes Ardentes (Walid) remporte le match 🏆🎉
 
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include <ctime>
-#include <memory>
+#include <algorithm> // Pour std::find
+#include <iostream>  // Pour std::cout
+#include <vector>    // Pour std::vector
+#include <string>    // Pour std::string
+#include <cstdlib>   // Pour std::rand
+#include <ctime>     // Pour std::time
+#include <memory>    // Pour std::unique_ptr
 
 using namespace std;
 
 // Classe de base Pokemon
 class Pokemon
 {
+    // Attributs nom, points de vie, attaque, défense, vitesse, points de vie initiaux et attaque spéciale activée
 protected:
     string nom;
     int pointsDeVie;
@@ -48,6 +49,7 @@ protected:
     bool attaqueSpecialeActivee = false; // Attribut pour suivre l'activation de l'attaque spéciale
 
 public:
+    // Constructeur avec initialisation des attributs
     Pokemon(string nom, int pv, int atk, int def, int vit)
         : nom(nom), pointsDeVie(pv), attaque(atk), defense(def), vitesse(vit), pointsDeVieInitiaux(pv) {}
 
@@ -70,6 +72,7 @@ public:
         return nom;
     }
 
+    // Méthode pour réduire les points de vie du Pokémon
     void perdrePV(int montant)
     {
         pointsDeVie = max(0, pointsDeVie - montant);
@@ -87,6 +90,7 @@ public:
         return pointsDeVie <= 0;
     }
 
+    // Méthode pour obtenir la vitesse du Pokémon
     int getVitesse() const
     {
         return vitesse;
@@ -101,8 +105,8 @@ public:
         // Affichage du message si l'attaque spéciale est activée
         if (chanceActivation < 0.3)
         {
-            attaqueSpecialeActivee = true;
-            cout << nom << " a activé son attaque spéciale !\n";
+            attaqueSpecialeActivee = true;                       // Activer l'attaque spéciale
+            cout << nom << " a activé son attaque spéciale !\n"; // Affichage du message
         }
     }
 
@@ -141,13 +145,14 @@ protected:
     }
 };
 
-// Classes dérivées pour chaque type de Pokémon
+// Classes dérivées pour les pokémons de type Feu
 class FirePokemon : public Pokemon
 {
 public:
     FirePokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
         return 1; // Feu
@@ -165,18 +170,21 @@ protected:
     }
 };
 
+// Classe dérivée pour les Pokémon de type Eau
 class WaterPokemon : public Pokemon
 {
 public:
     WaterPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
         return 2; // Eau
     }
-    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
+
 protected:
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
         if (cible.getType() == 1)
@@ -187,18 +195,21 @@ protected:
     }
 };
 
+// Classe dérivée pour les Pokémon de type Plante
 class GrassPokemon : public Pokemon
 {
 public:
     GrassPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
         return 3; // Plante
     }
 
 protected:
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
         if (cible.getType() == 1)
@@ -209,18 +220,21 @@ protected:
     }
 };
 
+// Classe dérivée pour les Pokémon de type Électrique
 class ElectricPokemon : public Pokemon
 {
 public:
     ElectricPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
         return 4; // Électrique
     }
 
 protected:
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
         if (cible.getType() == 2)
@@ -233,18 +247,21 @@ protected:
     }
 };
 
+// Classe dérivée pour les Pokémon de type Roche
 class RockPokemon : public Pokemon
 {
 public:
     RockPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
         return 5; // Roche
     }
 
 protected:
+    // Méthode pour calculer le multiplicateur de dégâts en fonction du type de Pokémon cible
     double calculerMultiplicateur(const Pokemon &cible) const override
     {
         if (cible.getType() == 1)
@@ -262,18 +279,18 @@ protected:
 unique_ptr<Pokemon> genererPokemonAleatoire()
 {
     // Types de Pokémon
-    int type = rand() % 5 + 1; // 1: Feu, 2: Eau, 3: Plante, 4: Electrique, 5: Roche
-    string nomsFeu[] = {"Salamèche", "Ponyta", "Dracaufeu"};
-    string nomsEau[] = {"Carapuce", "Tentacruel", "Tortank"};
-    string nomsPlante[] = {"Bulbizarre", "Florizarre", "Roserade"};
-    string nomsElectrique[] = {"Pikachu", "Raichu", "Voltali"};
-    string nomsRoche[] = {"Racaillou", "Gravalanch", "Tyranocif"};
-    int pv = rand() % 31 + 120; // PV aléatoires entre 120 et 150
-    int atk = rand() % 31 + 50; // Attaque aléatoire entre 50 et 80
-    int def = rand() % 21 + 40; // Défense aléatoire entre 40 et 60
-    int vit = rand() % 31 + 50; // Vitesse aléatoire entre 50 et 80
+    int type = rand() % 5 + 1;                                      // 1: Feu, 2: Eau, 3: Plante, 4: Electrique, 5: Roche
+    string nomsFeu[] = {"Salamèche", "Ponyta", "Dracaufeu"};        // Noms de Pokémon feu
+    string nomsEau[] = {"Carapuce", "Tentacruel", "Tortank"};       // Noms de Pokémon eau
+    string nomsPlante[] = {"Bulbizarre", "Florizarre", "Roserade"}; // Noms de Pokémon plante
+    string nomsElectrique[] = {"Pikachu", "Raichu", "Voltali"};     // Noms de Pokémon électrique
+    string nomsRoche[] = {"Racaillou", "Gravalanch", "Tyranocif"};  // Noms de Pokémon roche
+    int pv = rand() % 31 + 120;                                     // PV aléatoires entre 120 et 150
+    int atk = rand() % 31 + 50;                                     // Attaque aléatoire entre 50 et 80
+    int def = rand() % 21 + 40;                                     // Défense aléatoire entre 40 et 60
+    int vit = rand() % 31 + 50;                                     // Vitesse aléatoire entre 50 et 80
 
-    switch (type)
+    switch (type) // Sélection du type de Pokémon
     {
     case 1: // Feu
         // Retourne un pointeur unique vers un Pokémon de type Feu
@@ -317,12 +334,14 @@ public:
         this->nomEquipe = nomEquipe;
     }
 
+    // Méthode pour obtenir le nom de l'équipe
     string getNomEquipe() const
     {
         return nomEquipe;
     }
 
-    void ajouterPokemon(unique_ptr<Pokemon> p)
+    // Méthode pour ajouter un Pokémon à l'équipe
+    void ajouterPokemon(unique_ptr<Pokemon> p) // Ajout de pointeurs uniques
     {
         if (equipe.size() < 6)
         {
@@ -332,21 +351,22 @@ public:
         }
         else
         {
-            cout << "L'équipe est complète.\n";
+            cout << "L'équipe est complète.\n"; // Message si l'équipe est complète
         }
     }
 
     // Méthode pour sélectionner les trois premiers Pokémon de l'équipe
-    vector<Pokemon *> selectionnerEquipe()
+    vector<Pokemon *> selectionnerEquipe() // Retourne un vecteur de pointeurs de Pokémon
     {
-        vector<Pokemon *> selection;
-        for (size_t i = 0; i < min(static_cast<size_t>(3), equipe.size()); ++i)
+        vector<Pokemon *> selection;                                            // Vecteur de pointeurs de Pokémon
+        for (size_t i = 0; i < min(static_cast<size_t>(3), equipe.size()); ++i) // Sélection des trois premiers Pokémon
         {
-            selection.push_back(equipe[i].get());
+            selection.push_back(equipe[i].get()); // Ajout du pointeur du Pokémon à la sélection
         }
         return selection;
     }
 
+    // Méthode pour obtenir le nom du joueur
     string getNom() const
     {
         return nom;
@@ -356,17 +376,17 @@ public:
 // Fonction de combat entre deux équipes
 string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, const string &nomEquipe1, const string &nomEquipe2)
 {
-    size_t i = 0, j = 0, x = 0;
+    size_t i = 0, j = 0, x = 0; // Indices pour les équipes
 
-    cout << "\n===== \"" << nomEquipe1 << "\" 🆚 \"" << nomEquipe2 << "\" ! =====\n\n";
-    cout << "Equipe : " + nomEquipe1 << endl;
+    cout << "\n===== \"" << nomEquipe1 << "\" 🆚 \"" << nomEquipe2 << "\" ! =====\n\n"; // Affichage des noms des équipes
+    cout << "Equipe : " + nomEquipe1 << endl;                                           // Affichage des statistiques des Pokémon
     while (x < equipe1.size())
     {
         cout << "\t" << equipe1[x]->afficherStat() << endl;
         x++;
     }
     x = 0;
-    cout << "\nEquipe : " + nomEquipe2 << endl;
+    cout << "\nEquipe : " + nomEquipe2 << endl; // Affichage des statistiques des Pokémon
     while (x < equipe2.size())
     {
         cout << "\t" << equipe2[x]->afficherStat() << endl;
@@ -374,15 +394,15 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
     }
     while (i < equipe1.size() && j < equipe2.size())
     {
-        cout << "\n=== " << equipe1[i]->getNom() << " ⚔️ " << equipe2[j]->getNom() << " ! ===\n";
+        cout << "\n=== " << equipe1[i]->getNom() << " ⚔️ " << equipe2[j]->getNom() << " ! ===\n"; // Affichage des noms des Pokémon
 
         while (!equipe1[i]->estKO() && !equipe2[j]->estKO())
         {
-            if (equipe1[i]->getVitesse() >= equipe2[j]->getVitesse())
+            if (equipe1[i]->getVitesse() >= equipe2[j]->getVitesse()) // Vérifier la vitesse des Pokémon pour déterminer qui attaque en premier
             {
                 // L'équipe 1 attaque d'abord
-                equipe1[i]->attaquer(*equipe2[j]);
-                if (equipe2[j]->estKO())
+                equipe1[i]->attaquer(*equipe2[j]); // Attaque du Pokémon de l'équipe 1
+                if (equipe2[j]->estKO())           // Vérifier si le Pokémon de l'équipe 2 est KO
                 {
                     cout << equipe2[j]->getNom() << " est KO 💀\n";
                     cout << equipe1[i]->getNom() << " Remporte la partie! 🏆\n";
@@ -390,19 +410,19 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
                 }
 
                 // L'équipe 2 répond avec une attaque si elle n'est pas KO
-                equipe2[j]->attaquer(*equipe1[i]);
-                if (equipe1[i]->estKO())
+                equipe2[j]->attaquer(*equipe1[i]); // Attaque du Pokémon de l'équipe 2
+                if (equipe1[i]->estKO())           // Vérifier si le Pokémon de l'équipe 1 est KO
                 {
                     cout << equipe1[i]->getNom() << " est KO 💀\n";
                     cout << equipe2[j]->getNom() << " Remporte la partie! 🏆\n";
                     break; // Sortie de la boucle si un Pokémon est KO
                 }
             }
-            else
+            else // Si la vitesse du Pokémon de l'équipe 2 est supérieure
             {
                 // L'équipe 2 attaque d'abord
-                equipe2[j]->attaquer(*equipe1[i]);
-                if (equipe1[i]->estKO())
+                equipe2[j]->attaquer(*equipe1[i]); // Attaque du Pokémon de l'équipe 2
+                if (equipe1[i]->estKO())           // Vérifier si le Pokémon de l'équipe 1 est KO
                 {
                     cout << equipe1[i]->getNom() << " est KO 💀\n";
                     cout << equipe2[j]->getNom() << " Remporte la partie! 🏆\n";
@@ -410,8 +430,8 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
                 }
 
                 // L'équipe 1 répond avec une attaque si elle n'est pas KO
-                equipe1[i]->attaquer(*equipe2[j]);
-                if (equipe2[j]->estKO())
+                equipe1[i]->attaquer(*equipe2[j]); // Attaque du Pokémon de l'équipe 1
+                if (equipe2[j]->estKO())           // Vérifier si le Pokémon de l'équipe 2 est KO
                 {
                     cout << equipe2[j]->getNom() << " est KO 💀\n";
                     cout << equipe1[i]->getNom() << " Remporte la partie! 🏆\n";
@@ -420,17 +440,17 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
             }
         }
 
-        if (equipe1[i]->estKO())
+        if (equipe1[i]->estKO()) // Vérifier si le Pokémon de l'équipe 1 est KO
             ++i;
-        if (equipe2[j]->estKO())
+        if (equipe2[j]->estKO()) // Vérifier si le Pokémon de l'équipe 2 est KO
             ++j;
     }
-
+    // Retourner le nom de l'équipe gagnante
     if (i < equipe1.size())
     {
         cout << "\nL'équipe \"" << nomEquipe1 << "\" remporte le match 🏆🎉\n";
         int x = 0;
-        while (x < equipe1.size())
+        while (x < equipe1.size()) // Restaurer les points de vie des Pokémon
         {
             equipe1[x]->restaurerPV();
             x++;
@@ -441,7 +461,7 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
     {
         cout << "\nL'équipe \"" << nomEquipe2 << "\" remporte le match🏆🎉\n";
         int x = 0;
-        while (x < equipe2.size())
+        while (x < equipe2.size()) // Restaurer les points de vie des Pokémon
         {
             equipe2[x]->restaurerPV();
             x++;
@@ -455,6 +475,8 @@ Joueur genererJoueurAleatoire(vector<string> &nomsDejaUtilises)
 {
     // Liste de noms possibles pour les joueurs
     string nomsJoueurs[] = {"Walid", "Rayane", "Léo", "Alex", "Mélissa"};
+
+    // Varibale pour stocker un nom aléatoire pour le joueur
     string nomJoueur;
 
     // Recherche d'un nom non utilisé
@@ -476,12 +498,14 @@ Joueur genererJoueurAleatoire(vector<string> &nomsDejaUtilises)
     // Génération d'une équipe de 6 Pokémon
     for (int i = 0; i < 6; ++i)
     {
+        // Ajout d'un Pokémon aléatoire à l'équipe du joueur
         joueur.ajouterPokemon(genererPokemonAleatoire());
     }
 
     return joueur;
 }
 
+// Fonction pour organiser un combat entre deux joueurs
 string combattre(Joueur &joueur1, Joueur &joueur2)
 {
     // Sélectionner les équipes
@@ -501,7 +525,6 @@ string combattre(Joueur &joueur1, Joueur &joueur2)
         return joueur2.getNom();
     }
 }
-
 // Fonction pour organiser un tournoi entre quatre joueurs
 void tournoi(Joueur &joueur1, Joueur &joueur2, Joueur &joueur3, Joueur &joueur4)
 {
@@ -554,7 +577,7 @@ void tournoi(Joueur &joueur1, Joueur &joueur2, Joueur &joueur3, Joueur &joueur4)
 
 int main()
 {
-    srand(static_cast<unsigned>(time(0)));
+    srand(static_cast<unsigned>(time(0))); // Initialisation de la graine pour la génération aléatoire
 
     vector<string> nomsDejaUtilises; // Liste pour suivre les noms déjà utilisés
 
@@ -563,7 +586,6 @@ int main()
     Joueur joueur2 = genererJoueurAleatoire(nomsDejaUtilises);
     Joueur joueur3 = genererJoueurAleatoire(nomsDejaUtilises);
     Joueur joueur4 = genererJoueurAleatoire(nomsDejaUtilises);
-    Joueur winner1, winner2;
 
     tournoi(joueur1, joueur2, joueur3, joueur4);
 
