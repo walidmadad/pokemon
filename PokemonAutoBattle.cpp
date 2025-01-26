@@ -490,7 +490,7 @@ string combattreEquipes(vector<Pokemon *> equipe1, vector<Pokemon *> equipe2, co
 Joueur genererJoueurAleatoire(vector<string> &nomsDejaUtilises)
 {
     // Liste de noms possibles pour les joueurs
-    string nomsJoueurs[] = {"Walid", "Rayane", "Léo", "Alex", "Mélissa"};
+    string nomsJoueurs[] = {"Walid", "Rayane", "Mathieu", "Elissa", "Yanis", "Léo", "Lina"};
 
     // Varibale pour stocker un nom aléatoire pour le joueur
     string nomJoueur;
