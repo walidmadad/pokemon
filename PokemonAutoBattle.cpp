@@ -9,6 +9,7 @@
    Les dégâts sont calculés en fonction de l'attaque, de la défense, de la vitesse et du type des Pokémon.
    Les Pokémon peuvent également activer une attaque spéciale avec une probabilité de 30% pour infliger des dégâts supplémentaires.
    Le programme affiche les statistiques des Pokémon, les dégâts infligés et le résultat du combat.
+   Les Pokémon KO sont restaurés après chaque combat.
 */
 
 // Compilation: g++ Pokemon.cpp -o Pokemon -std=c++11 && ./Pokemon
@@ -122,7 +123,7 @@ public:
     }
 
     // Méthode pour attaquer un autre Pokémon
-    void attaquer(Pokemon &cible)
+    void attaquer(Pokemon &cible) // references pour modifer l'objet directement sans creer une copie
     {
 
         // Activer l'attaque spéciale avant de commencer l'attaque
@@ -168,6 +169,10 @@ public:
     FirePokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Destructeur de FirePokemon
+    ~FirePokemon() override
+    {
+    }
     // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
@@ -193,6 +198,10 @@ public:
     WaterPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Destructeur de la classe WaterPokemon
+    ~WaterPokemon() override
+    {
+    }
     // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
@@ -218,6 +227,10 @@ public:
     GrassPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Destructeur de la classe GrassPokemon
+    ~GrassPokemon() override
+    {
+    }
     // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
@@ -243,6 +256,10 @@ public:
     ElectricPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Destructeur de la classe ElectricPokemon
+    ~ElectricPokemon() override
+    {
+    }
     // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
@@ -270,6 +287,10 @@ public:
     RockPokemon(string nom, int pv, int atk, int def, int vit)
         : Pokemon(nom, pv, atk, def, vit) {}
 
+    // Destructeur de la classe RockPokemon
+    ~RockPokemon() override
+    {
+    }
     // Méthode pour obtenir le type du Pokémon
     int getType() const override
     {
@@ -292,7 +313,7 @@ protected:
 
 // Génération aléatoire de Pokémon
 // Retourne un pointeur unique vers un Pokémon
-unique_ptr<Pokemon> genererPokemonAleatoire()
+unique_ptr<Pokemon> genererPokemonAleatoire() // pointeur unique pour éviter les fuites de mémoire
 {
     // Types de Pokémon
     int type = rand() % 5 + 1;                                      // 1: Feu, 2: Eau, 3: Plante, 4: Electrique, 5: Roche
@@ -310,19 +331,19 @@ unique_ptr<Pokemon> genererPokemonAleatoire()
     {
     case 1: // Feu
         // Retourne un pointeur unique vers un Pokémon de type Feu
-        return make_unique<FirePokemon>(nomsFeu[rand() % 3], pv, atk, def, vit);
-    case 2: // Eau
+        return make_unique<FirePokemon>(nomsFeu[rand() % 3], pv, atk, def, vit); // make_unique pour éviter les fuites de mémoire
+    case 2:                                                                      // Eau
         // Retourne un pointeur unique vers un Pokémon de type Eau
-        return make_unique<WaterPokemon>(nomsEau[rand() % 3], pv, atk, def, vit);
-    case 3: // Plante
+        return make_unique<WaterPokemon>(nomsEau[rand() % 3], pv, atk, def, vit); // make_unique pour éviter les fuites de mémoire
+    case 3:                                                                       // Plante
         // Retourne un pointeur unique vers un Pokémon de type Plante
-        return make_unique<GrassPokemon>(nomsPlante[rand() % 3], pv, atk, def, vit);
-    case 4: // Électrique
+        return make_unique<GrassPokemon>(nomsPlante[rand() % 3], pv, atk, def, vit); // make_unique pour éviter les fuites de mémoire
+    case 4:                                                                          // Électrique
         // Retourne un pointeur unique vers un Pokémon de type Électrique
-        return make_unique<ElectricPokemon>(nomsElectrique[rand() % 3], pv, atk, def, vit);
-    case 5: // Roche
+        return make_unique<ElectricPokemon>(nomsElectrique[rand() % 3], pv, atk, def, vit); // make_unique pour éviter les fuites de mémoire
+    case 5:                                                                                 // Roche
         // Retourne un pointeur unique vers un Pokémon de type Roche
-        return make_unique<RockPokemon>(nomsRoche[rand() % 3], pv, atk, def, vit);
+        return make_unique<RockPokemon>(nomsRoche[rand() % 3], pv, atk, def, vit); // make_unique pour éviter les fuites de mémoire
     default:
         // Retourne un pointeur nul si le type est invalide
         return nullptr;
@@ -340,9 +361,9 @@ public:
     Joueur()
     {
         nom = "";
-        equipe.clear(); // Si vous avez un vecteur d'équipe
+        equipe.clear(); // Initialisation de l'équipe
     }
-    Joueur(string nom) : nom(nom), nomEquipe("Équipe sans nom") {}
+    Joueur(string nom) : nom(nom), nomEquipe("Équipe sans nom") {} // Constructeur avec initialisation du nom du joueur et de l'équipe
 
     // Méthodes pour définir le nom de l'équipe et ajouter un Pokémon à l'équipe
     void setNomEquipe(const string &nomEquipe)
